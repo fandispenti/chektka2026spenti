@@ -9,8 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -142,10 +140,8 @@
             </div>
 
             <div class="flex gap-3">
-                <button onclick="downloadPDF()" class="flex-1 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-2 rounded-lg transition-colors flex items-center justify-center">
-                    <i class="fas fa-download mr-2"></i> PDF
-                </button>
-                <button onclick="resetSearch()" class="flex-1 border border-white/20 hover:bg-white/10 text-white py-2 rounded-lg transition-colors">
+                <!-- Tombol Download PDF DIHAPUS -->
+                <button onclick="resetSearch()" class="w-full border border-white/20 hover:bg-white/10 text-white py-2 rounded-lg transition-colors flex items-center justify-center">
                     <i class="fas fa-arrow-left mr-2"></i> Kembali
                 </button>
             </div>
@@ -213,9 +209,7 @@
 
         window.onload = loadTopPerformers;
 
-        // --- FUNGSI PENCARIAN YANG DIPERBAIKI ---
         function cariSiswa() {
-            // Ambil input dan bersihkan spasi
             let input = document.getElementById('inputNISN').value.trim();
             const errorMsg = document.getElementById('errorMessage');
             
@@ -224,13 +218,8 @@
                 return;
             }
 
-            // Normalisasi input: pastikan string, hapus karakter non-angka jika ada (opsional)
-            // Kita coba cari dengan metode yang lebih fleksibel
-            
-            // Metode 1: Cari exact match (string to string)
+            // Normalisasi input untuk pencarian fleksibel
             let siswa = dataSiswa.find(s => String(s.nisn).trim() === input);
-
-            // Metode 2: Jika gagal, coba bandingkan sebagai angka (untuk mengatasi masalah leading zero)
             if (!siswa) {
                 const inputNum = Number(input);
                 siswa = dataSiswa.find(s => Number(s.nisn) === inputNum);
@@ -285,50 +274,6 @@
             const el = document.getElementById('errorMessage');
             el.innerText = msg;
             el.classList.remove('hidden');
-        }
-
-        function downloadPDF() {
-            if (!currentStudent) return;
-            
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFontSize(18);
-            doc.setTextColor(10, 25, 47);
-            doc.text("SMP NEGERI 3 BATAM", 105, 20, null, null, "center");
-            doc.setFontSize(14);
-            doc.text("Kartu Hasil Tes Kemampuan Akademik", 105, 30, null, null, "center");
-            
-            doc.setLineWidth(0.5);
-            doc.line(20, 35, 190, 35);
-
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Nama : ${currentStudent.nama}`, 20, 50);
-            doc.text(`NISN : ${currentStudent.nisn}`, 20, 60);
-            
-            doc.setDrawColor(200);
-            doc.setFillColor(240, 240, 240);
-            doc.rect(20, 75, 170, 10, 'F');
-            doc.text("Mata Pelajaran", 25, 81);
-            doc.text("Nilai", 130, 81);
-            doc.text("Keterangan", 155, 81); 
-            
-            doc.line(20, 85, 190, 85);
-            doc.text("Matematika", 25, 95);
-            doc.text(currentStudent.matematika.toString(), 130, 95);
-            doc.text(currentStudent.ket_mat || "-", 155, 95);
-            
-            doc.line(20, 100, 190, 100);
-            doc.text("Bahasa Indonesia", 25, 105);
-            doc.text(currentStudent.b_indo.toString(), 130, 105);
-            doc.text(currentStudent.ket_indo || "-", 155, 105);
-
-            doc.setFontSize(10);
-            doc.setTextColor(150);
-            doc.text("Dokumen ini diterbitkan secara otomatis.", 105, 130, null, null, "center");
-
-            doc.save(`Hasil_TKA_${currentStudent.nisn}.pdf`);
         }
     </script>
 </body>
